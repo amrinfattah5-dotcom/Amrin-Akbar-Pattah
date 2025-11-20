@@ -69,6 +69,10 @@ kemudian Menyediakan sumber daya infrastruktur seperti:
 ## soal 3
 **Buat 2 workspace menggunakan uv. Workspace 1 menggunakan Python 3.14 free-threaded dan 1 lagi menggunakan Python 3.14 (GIL-enabled). buat 2 program yang akan dieksekusi di masing-masing workspace tersebut (2 program yang sama di setiap workspace). 2 program tersebut merupakan program untuk mengambil data JSON dari suatu endpoint. Program 1 menggunakan asyncio (async-http), sementara program satunya lagi menggunakan multiprocessing untuk pemrograman paralel. Bandingkan waktu yang diperlukan untuk mengakses JSON endpoint tersebut. Tulis hasil tersebut pada README.md pada setiap workspace.**
 
+**jawaban**
+https://github.com/amrinfattah5/otp_project
+
+
 
 
 
