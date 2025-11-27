@@ -1,0 +1,304 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyO1S9SiUTR8p4sivI2u5LIo",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/amrinfattah5-dotcom/Amrin-Akbar-Pattah/blob/main/parallel-programming-tasks/08\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Ao0AzymskdYW",
+        "outputId": "64331f65-f75b-4977-b681-8724fbec6576"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting dask-ml\n",
+            "  Downloading dask_ml-2025.1.0-py3-none-any.whl.metadata (6.0 kB)\n",
+            "Requirement already satisfied: matplotlib in /usr/local/lib/python3.12/dist-packages (3.10.0)\n",
+            "Requirement already satisfied: dask[complete] in /usr/local/lib/python3.12/dist-packages (2025.9.1)\n",
+            "Requirement already satisfied: click>=8.1 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (8.3.1)\n",
+            "Requirement already satisfied: cloudpickle>=3.0.0 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (3.1.2)\n",
+            "Requirement already satisfied: fsspec>=2021.09.0 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (2025.3.0)\n",
+            "Requirement already satisfied: packaging>=20.0 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (25.0)\n",
+            "Requirement already satisfied: partd>=1.4.0 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (1.4.2)\n",
+            "Requirement already satisfied: pyyaml>=5.3.1 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (6.0.3)\n",
+            "Requirement already satisfied: toolz>=0.10.0 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (0.12.1)\n",
+            "Requirement already satisfied: pyarrow>=14.0.1 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (18.1.0)\n",
+            "Collecting lz4>=4.3.2 (from dask[complete])\n",
+            "  Downloading lz4-4.4.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (3.8 kB)\n",
+            "Collecting dask-glm>=0.2.0 (from dask-ml)\n",
+            "  Downloading dask_glm-0.3.2-py2.py3-none-any.whl.metadata (1.5 kB)\n",
+            "Requirement already satisfied: distributed>=2025.1.0 in /usr/local/lib/python3.12/dist-packages (from dask-ml) (2025.9.1)\n",
+            "Requirement already satisfied: multipledispatch>=0.4.9 in /usr/local/lib/python3.12/dist-packages (from dask-ml) (1.0.0)\n",
+            "Requirement already satisfied: numba>=0.51.0 in /usr/local/lib/python3.12/dist-packages (from dask-ml) (0.60.0)\n",
+            "Requirement already satisfied: numpy>=1.24.0 in /usr/local/lib/python3.12/dist-packages (from dask-ml) (2.0.2)\n",
+            "Requirement already satisfied: pandas>=2.0 in /usr/local/lib/python3.12/dist-packages (from dask-ml) (2.2.2)\n",
+            "Requirement already satisfied: scikit-learn>=1.6.1 in /usr/local/lib/python3.12/dist-packages (from dask-ml) (1.6.1)\n",
+            "Requirement already satisfied: scipy in /usr/local/lib/python3.12/dist-packages (from dask-ml) (1.16.3)\n",
+            "Requirement already satisfied: contourpy>=1.0.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib) (1.3.3)\n",
+            "Requirement already satisfied: cycler>=0.10 in /usr/local/lib/python3.12/dist-packages (from matplotlib) (0.12.1)\n",
+            "Requirement already satisfied: fonttools>=4.22.0 in /usr/local/lib/python3.12/dist-packages (from matplotlib) (4.60.1)\n",
+            "Requirement already satisfied: kiwisolver>=1.3.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib) (1.4.9)\n",
+            "Requirement already satisfied: pillow>=8 in /usr/local/lib/python3.12/dist-packages (from matplotlib) (11.3.0)\n",
+            "Requirement already satisfied: pyparsing>=2.3.1 in /usr/local/lib/python3.12/dist-packages (from matplotlib) (3.2.5)\n",
+            "Requirement already satisfied: python-dateutil>=2.7 in /usr/local/lib/python3.12/dist-packages (from matplotlib) (2.9.0.post0)\n",
+            "Collecting sparse>=0.7.0 (from dask-glm>=0.2.0->dask-ml)\n",
+            "  Downloading sparse-0.17.0-py2.py3-none-any.whl.metadata (5.3 kB)\n",
+            "Requirement already satisfied: jinja2>=2.10.3 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (3.1.6)\n",
+            "Requirement already satisfied: locket>=1.0.0 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (1.0.0)\n",
+            "Requirement already satisfied: msgpack>=1.0.2 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (1.1.2)\n",
+            "Requirement already satisfied: psutil>=5.8.0 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (5.9.5)\n",
+            "Requirement already satisfied: sortedcontainers>=2.0.5 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (2.4.0)\n",
+            "Requirement already satisfied: tblib>=1.6.0 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (3.2.2)\n",
+            "Requirement already satisfied: tornado>=6.2.0 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (6.5.1)\n",
+            "Requirement already satisfied: urllib3>=1.26.5 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (2.5.0)\n",
+            "Requirement already satisfied: zict>=3.0.0 in /usr/local/lib/python3.12/dist-packages (from distributed>=2025.1.0->dask-ml) (3.0.0)\n",
+            "Requirement already satisfied: llvmlite<0.44,>=0.43.0dev0 in /usr/local/lib/python3.12/dist-packages (from numba>=0.51.0->dask-ml) (0.43.0)\n",
+            "Requirement already satisfied: pytz>=2020.1 in /usr/local/lib/python3.12/dist-packages (from pandas>=2.0->dask-ml) (2025.2)\n",
+            "Requirement already satisfied: tzdata>=2022.7 in /usr/local/lib/python3.12/dist-packages (from pandas>=2.0->dask-ml) (2025.2)\n",
+            "Requirement already satisfied: six>=1.5 in /usr/local/lib/python3.12/dist-packages (from python-dateutil>=2.7->matplotlib) (1.17.0)\n",
+            "Requirement already satisfied: joblib>=1.2.0 in /usr/local/lib/python3.12/dist-packages (from scikit-learn>=1.6.1->dask-ml) (1.5.2)\n",
+            "Requirement already satisfied: threadpoolctl>=3.1.0 in /usr/local/lib/python3.12/dist-packages (from scikit-learn>=1.6.1->dask-ml) (3.6.0)\n",
+            "Requirement already satisfied: bokeh>=3.1.0 in /usr/local/lib/python3.12/dist-packages (from dask[complete]) (3.7.3)\n",
+            "Requirement already satisfied: narwhals>=1.13 in /usr/local/lib/python3.12/dist-packages (from bokeh>=3.1.0->dask[complete]) (2.12.0)\n",
+            "Requirement already satisfied: xyzservices>=2021.09.1 in /usr/local/lib/python3.12/dist-packages (from bokeh>=3.1.0->dask[complete]) (2025.11.0)\n",
+            "Requirement already satisfied: MarkupSafe>=2.0 in /usr/local/lib/python3.12/dist-packages (from jinja2>=2.10.3->distributed>=2025.1.0->dask-ml) (3.0.3)\n",
+            "Downloading dask_ml-2025.1.0-py3-none-any.whl (149 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m150.0/150.0 kB\u001b[0m \u001b[31m3.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading dask_glm-0.3.2-py2.py3-none-any.whl (13 kB)\n",
+            "Downloading lz4-4.4.5-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.4 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.4/1.4 MB\u001b[0m \u001b[31m19.2 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading sparse-0.17.0-py2.py3-none-any.whl (259 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m259.4/259.4 kB\u001b[0m \u001b[31m9.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hInstalling collected packages: lz4, sparse, dask-glm, dask-ml\n",
+            "Successfully installed dask-glm-0.3.2 dask-ml-2025.1.0 lz4-4.4.5 sparse-0.17.0\n"
+          ]
+        }
+      ],
+      "source": [
+        "!pip install \"dask[complete]\" dask-ml matplotlib\n"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "import dask.array as da\n",
+        "import dask.bag as db\n",
+        "import dask.dataframe as dd\n",
+        "import dask_ml.preprocessing as dprep\n",
+        "import pandas as pd\n",
+        "import matplotlib.pyplot as plt\n"
+      ],
+      "metadata": {
+        "id": "GAOD4gv3k-Ld"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "x = da.random.random((10000, 10000), chunks=(1000, 1000))\n",
+        "x\n"
+      ],
+      "metadata": {
+        "id": "okcymVDLlDZq"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [],
+      "metadata": {
+        "id": "ElNi4JzWlGzb"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "mean_value = x.mean()\n",
+        "sum_value = x.sum()\n",
+        "\n",
+        "print(\"Mean:\", mean_value.compute())\n",
+        "print(\"Sum :\", sum_value.compute())\n"
+      ],
+      "metadata": {
+        "id": "5pUZVgislG41"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "arr = x[:100, :100].compute()\n",
+        "plt.imshow(arr)\n",
+        "plt.title(\"Visualisasi Dask Array (100x100)\")\n",
+        "plt.colorbar()\n",
+        "plt.show()\n"
+      ],
+      "metadata": {
+        "id": "TIwNTku8lKbX"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "data = list(range(1, 21))\n"
+      ],
+      "metadata": {
+        "id": "9IIwWPZZlNh1"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [],
+      "metadata": {
+        "id": "JuPVRin3lima"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "bag = db.from_sequence(data, npartitions=4)\n"
+      ],
+      "metadata": {
+        "id": "P5ztdM5ElRfY"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "hasil = bag.map(lambda x: x * 2).compute()\n",
+        "hasil\n"
+      ],
+      "metadata": {
+        "id": "dx2UcX8MlUfH"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "df = pd.DataFrame({\n",
+        "    \"nama\": [\"Andi\",\"Budi\",\"Cici\",\"Dewi\"] * 25000,\n",
+        "    \"nilai\": list(range(100000))\n",
+        "})\n",
+        "\n",
+        "ddf = dd.from_pandas(df, npartitions=10)\n",
+        "ddf.head()\n"
+      ],
+      "metadata": {
+        "id": "xhIwRQwrlY7q"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "ddf[\"nilai\"].mean().compute(), ddf[\"nilai\"].max().compute()\n"
+      ],
+      "metadata": {
+        "id": "dp18ghSylcb-"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "sample = ddf.sample(frac=0.01).compute()\n",
+        "plt.hist(sample[\"nilai\"], bins=20)\n",
+        "plt.title(\"Distribusi Nilai (Sample 1%)\")\n",
+        "plt.show()\n"
+      ],
+      "metadata": {
+        "id": "Pt8tFEwMldz2"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "ddf2 = ddf.copy()\n",
+        "ddf2.loc[0, \"nilai\"] = None\n",
+        "dd_clean = ddf2.dropna()\n",
+        "dd_clean.head()\n"
+      ],
+      "metadata": {
+        "id": "nUQX53ajlrhG"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [],
+      "metadata": {
+        "id": "uCqijnK9ltii"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "scaler = dprep.MinMaxScaler()\n",
+        "scaled = scaler.fit_transform(ddf[[\"nilai\"]])\n",
+        "scaled.compute().head()\n"
+      ],
+      "metadata": {
+        "id": "QrDJwVdEl4Od"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "housing = dd.read_csv(\"sample_data/california_housing_train.csv\")\n",
+        "housing.head()\n"
+      ],
+      "metadata": {
+        "id": "1cpP7KNrmGK2"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "housing.describe().compute()\n"
+      ],
+      "metadata": {
+        "id": "gVgUEfqjmI02"
+      }
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "sample = housing.sample(frac=0.01).compute()\n",
+        "\n",
+        "plt.scatter(sample[\"longitude\"], sample[\"median_house_value\"], s=5)\n",
+        "plt.title(\"Visualisasi Harga Rumah (1% Sample)\")\n",
+        "plt.xlabel(\"Longitude\")\n",
+        "plt.ylabel(\"Price\")\n",
+        "plt.show()\n"
+      ],
+      "metadata": {
+        "id": "rP11_PsdmUcr"
+      }
+    }
+  ]
+}
